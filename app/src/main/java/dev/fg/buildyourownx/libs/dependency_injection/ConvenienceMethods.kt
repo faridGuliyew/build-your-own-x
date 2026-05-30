@@ -1,0 +1,7 @@
+package dev.fg.buildyourownx.libs.dependency_injection
+
+fun module(block: Module.() -> Unit) : Module {
+    val module = Module()
+    block(module)
+    return module
+}
