@@ -1,8 +1,10 @@
 package dev.fg.buildyourownx.libs.dependency_injection
 
-class Module {
+class Module (
+    val globalContainer: DependencyContainer
+) {
     @PublishedApi
-    internal val dependencyContainer = DependencyContainer()
+    internal val dependencyContainer: WritableDependencyContainer = DependencyContainer()
 
     inline fun <reified T: Any> single(qualifier: Any? = null, noinline block: () -> T) {
         dependencyContainer.addDependency(T::class.qualifiedName!!, qualifier, DependencyType.SINGLE, block)
@@ -12,6 +14,6 @@ class Module {
     }
 
     inline fun <reified T: Any> get(qualifier: Any? = null) : T {
-        return dependencyContainer.getDependency(T::class.qualifiedName!!, qualifier)
+        return globalContainer.getDependency(T::class.qualifiedName!!, qualifier)
     }
 }

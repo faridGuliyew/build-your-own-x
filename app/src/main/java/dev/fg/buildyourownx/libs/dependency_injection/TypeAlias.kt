@@ -1,4 +1,7 @@
 package dev.fg.buildyourownx.libs.dependency_injection
 
-typealias InitializedDependencyMap = HashMap<String, HashMap<Any?, Any>>
-typealias FactoryDependencyMap = HashMap<String, HashMap<Any?, () -> Any>>
+import java.util.concurrent.ConcurrentHashMap
+
+typealias InitializedDependencyConcurrentHashMap = ConcurrentHashMap<DependencyKey, Any>
+typealias FactoryDependencyConcurrentHashMap = ConcurrentHashMap<DependencyKey, () -> Any>
+typealias FactoryDependencyHashMap = HashMap<DependencyKey, () -> Any>
