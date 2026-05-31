@@ -1,29 +1,14 @@
-# ImageLoader
+# 🚀 Build-Your-Own-X
 
-A custom, low-level Android image loading and caching library built from scratch in Kotlin and optimized for Jetpack Compose. 
+I will be implementing my own version of libraries in this repository, without the use of AI!
 
-This engine is part of a deep-dive exploration into Android internals, designed to bypass abstract high-level frameworks.
+The idea is to better understand how these frameworks we interact with everyday without thinking actually work,
+and what problems they solve for us, and not replace them.
 
-## 🚀 Core Architectural Features
+Solutions I will be sharing will be somewhat great, but definitely not optimized for production use, only for good enough understanding.
 
-* **Parallelism Throttling:** Uses `Semaphore` to limit concurrent network operations, avoiding excessive bandwidth usage
-* **In-Memory Cache:** Maintains `LruCache` to reduce load times & network requests for recently loaded images
-* **Downsampling:** Implements scaling images down, using `inSampleSize`
-* **Hardware Accelerated Graphics:** Decodes streams directly into `Bitmap.Config.HARDWARE` configurations, minimizing JVM Heap usage
-* **OOM Prevention** Allocates a very minimal buffer to write socket stream into a temporary file, no extra JVM Heap is used
-* **Coroutine Support:** Performs network requests and I/O operations on `Dispatchers.IO` via  `Flow`, and handles cancellation gracefully
----
 
-## 🛠️ Usage
 
-Initialize the loader and expose it via `CompositionLocal`:
-
-```kotlin
-val imageLoader = ImageLoader.Builder()
-// Add desired configs
-.build()
-
-CompositionLocalProvider (LocalImageLoader provides imageLoader) {
-  ... your app code goes here
-}
-```
+## Check out my libraries so far (click on them):
+[Custom ImageLoader](app/src/main/java/dev/fg/buildyourownx/libs/image_loader/README.md)
+[Custom ServiceLocator](app/src/main/java/dev/fg/buildyourownx/libs/dependency_injection/README.md)
