@@ -11,4 +11,5 @@ Solutions I will be sharing will be somewhat great, but definitely not optimized
 
 ## Check out my libraries so far (click on them):
 [Custom ImageLoader](app/src/main/java/dev/fg/buildyourownx/libs/image_loader/README.md)
+
 [Custom ServiceLocator](app/src/main/java/dev/fg/buildyourownx/libs/dependency_injection/README.md)
