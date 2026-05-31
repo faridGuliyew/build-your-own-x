@@ -1,16 +1,17 @@
 package dev.fg.buildyourownx.libs.dependency_injection.example
 
-import dev.fg.buildyourownx.libs.dependency_injection.module
+import dev.fg.buildyourownx.libs.dependency_injection.convenience.module
 
 val appModule = module {
 
-    single("SingleUser") { User("admin", "admin_pwd", get()) }
-    factory("FactoryUser") { User("normal", "normal_pwd", get()) }
-    factory { User("normal", "normal_pwd", get()) }
+    single("SingleUser") { User("single", it!!.params!!.get("PASSWORD") as String, get()) }
+    factory("FactoryUser") { User("factory", "factory_pwd", get()) }
+    factory { User("NoQualifierFactoryUser", "normal_pwd", get()) }
+    viewModel { DependencyInjectionViewModel(it.savedStateHandle) }
 }
 
 val otherModule = module {
-    single { UserInfo("general id") }
+    single { UserInfo("single_id") }
 }
 
 
