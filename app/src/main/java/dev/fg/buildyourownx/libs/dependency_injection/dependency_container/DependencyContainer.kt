@@ -9,5 +9,5 @@ import kotlin.reflect.KClass
  * */
 interface DependencyContainer : WritableDependencyContainer {
     fun mergeContainer(container: WritableDependencyContainer)
-    fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?) : T
+    fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?, detectChain: Boolean) : T
 }

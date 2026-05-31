@@ -11,6 +11,7 @@ import kotlin.reflect.KClass
  * */
 class InjectorImpl : Injector {
     override val dependencyContainer = DependencyContainerImpl()
+    override val detectChain = true
 
     override fun start(modules: List<Module>) {
         for (module in modules) {
@@ -19,7 +20,7 @@ class InjectorImpl : Injector {
     }
 
     override fun <T : Any> get(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?): T {
-        return dependencyContainer.getDependency(clazz, qualifier, creationExtras)
+        return dependencyContainer.getDependency(clazz, qualifier, creationExtras, detectChain = detectChain)
     }
 
     override fun verifyModules() {

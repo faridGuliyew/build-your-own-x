@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import dev.fg.buildyourownx.libs.dependency_injection.dependency_container.DependencyContainer
 import dev.fg.buildyourownx.libs.dependency_injection.dependency_container.DependencyContainerImpl
 import dev.fg.buildyourownx.libs.dependency_injection.dependency_container.WritableDependencyContainer
+import dev.fg.buildyourownx.libs.dependency_injection.injector.Injector
 
 open class CreationExtras(
     open val params: Map<Any, Any>? = null
@@ -16,7 +17,7 @@ class VMCreationExtras(
 ) : CreationExtras()
 
 class Module (
-    val globalContainer: DependencyContainer
+    val injector: Injector
 ) {
     @PublishedApi
     internal val dependencyContainer: WritableDependencyContainer = DependencyContainerImpl()
@@ -33,6 +34,6 @@ class Module (
     }
 
     inline fun <reified T: Any> get(qualifier: Any? = null, creationExtras: CreationExtras? = null) : T {
-        return globalContainer.getDependency(T::class, qualifier, creationExtras)
+        return injector.dependencyContainer.getDependency(T::class, qualifier, creationExtras, injector.detectChain)
     }
 }

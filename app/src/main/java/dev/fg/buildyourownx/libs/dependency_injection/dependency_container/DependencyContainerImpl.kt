@@ -31,12 +31,29 @@ class DependencyContainerImpl: DependencyContainer {
         }
     }
 
-    override fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?) : T {
+    private val resolvingKeys = ThreadLocal<MutableSet<DependencyKey>>()
+    override fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?, detectChain: Boolean) : T {
         val key = DependencyKey(clazz as KClass<Any>, qualifier)
-        return getInitializedSingleDependency(key)
-            ?: getFactoryDependency(key, creationExtras)
-            ?: getSingleDependency(key, creationExtras)
-            ?: throw InjectorException.DefinitionNotFoundException("No dependency for ${key.className} with qualifier: $qualifier is found in any module")
+
+        if (detectChain) {
+            if (resolvingKeys.get() == null) resolvingKeys.set(LinkedHashSet())
+            val currentChain = resolvingKeys.get()
+            if (currentChain?.add(key) == false) {
+                throw InjectorException.UnsupportedException(
+                    "Circular dependency detected! Already resolving ${key.className} " +
+                            "in the current graph chain: ${currentChain.joinToString(" -> ") { it.className }}"
+                )
+            }
+        }
+
+        try {
+            return getInitializedSingleDependency(key)
+                ?: getFactoryDependency(key, creationExtras)
+                ?: getSingleDependency(key, creationExtras)
+                ?: throw InjectorException.DefinitionNotFoundException("No dependency for ${key.className} with qualifier: $qualifier is found in any module")
+        } finally {
+            resolvingKeys.get()?.remove(key)
+        }
     }
 
     // Getters for each dependency type

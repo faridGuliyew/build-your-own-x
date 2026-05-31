@@ -11,6 +11,7 @@ import kotlin.reflect.KClass
  * */
 interface Injector {
     val dependencyContainer: DependencyContainer
+    val detectChain: Boolean
     fun start(modules: List<Module>)
 
     fun <T : Any> get(clazz: KClass<T>, qualifier: Any? = null, creationExtras: CreationExtras?): T
