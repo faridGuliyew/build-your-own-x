@@ -4,8 +4,8 @@ import dev.fg.buildyourownx.libs.dependency_injection.convenience.module
 
 val appModule = module {
 
-    single("SingleUser") { User("single", it!!.params!!.get("PASSWORD") as String, get()) }
-    factory("FactoryUser") { User("factory", "factory_pwd", get()) }
+    single("SingleUser") { User("single", "single_pwd", get()) }
+    factory("FactoryUser") { User("factory", "factory_pwd with extra: ${it!!.params!!.get("ORDER") as Int}", get()) }
     factory { User("NoQualifierFactoryUser", "normal_pwd", get()) }
     viewModel { DependencyInjectionViewModel(it.savedStateHandle) }
 }
