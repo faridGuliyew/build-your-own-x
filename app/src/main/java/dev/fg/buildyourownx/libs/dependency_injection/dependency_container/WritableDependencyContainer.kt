@@ -1,5 +1,6 @@
 package dev.fg.buildyourownx.libs.dependency_injection.dependency_container
 
+import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import dev.fg.buildyourownx.libs.dependency_injection.DependencyType
 import dev.fg.buildyourownx.libs.dependency_injection.FactoryDependencyConcurrentHashMap
 import dev.fg.buildyourownx.libs.dependency_injection.FactoryDependencyHashMap
@@ -13,5 +14,5 @@ interface WritableDependencyContainer {
     val singleDependencies: FactoryDependencyConcurrentHashMap
     val factoryDependencies: FactoryDependencyHashMap
 
-    fun <T: Any> addDependency(clazz: KClass<T>, qualifier: Any?, type: DependencyType, block: () -> T)
+    fun <T: Any> addDependency(clazz: KClass<T>, qualifier: Any?, type: DependencyType, block: (CreationExtras?) -> T)
 }

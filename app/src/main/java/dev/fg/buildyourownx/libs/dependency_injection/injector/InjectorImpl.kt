@@ -1,5 +1,6 @@
 package dev.fg.buildyourownx.libs.dependency_injection.injector
 
+import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import dev.fg.buildyourownx.libs.dependency_injection.InjectorException
 import dev.fg.buildyourownx.libs.dependency_injection.Module
 import dev.fg.buildyourownx.libs.dependency_injection.dependency_container.DependencyContainerImpl
@@ -17,8 +18,8 @@ class InjectorImpl : Injector {
         }
     }
 
-    override fun <T : Any> get(clazz: KClass<T>, qualifier: Any?): T {
-        return dependencyContainer.getDependency(clazz, qualifier)
+    override fun <T : Any> get(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?): T {
+        return dependencyContainer.getDependency(clazz, qualifier, creationExtras)
     }
 
     override fun verifyModules() {

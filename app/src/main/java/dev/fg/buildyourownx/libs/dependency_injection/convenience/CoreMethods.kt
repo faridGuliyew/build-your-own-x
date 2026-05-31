@@ -1,7 +1,7 @@
-package dev.fg.buildyourownx.libs.dependency_injection
+package dev.fg.buildyourownx.libs.dependency_injection.convenience
 
+import dev.fg.buildyourownx.libs.dependency_injection.Module
 import dev.fg.buildyourownx.libs.dependency_injection.injector.Inject
-import dev.fg.buildyourownx.libs.dependency_injection.injector.InjectorImpl
 
 fun module(block: Module.() -> Unit) : Module {
     val module = Module(Inject.injector.dependencyContainer)

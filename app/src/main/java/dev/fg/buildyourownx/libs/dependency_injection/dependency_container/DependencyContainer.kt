@@ -1,5 +1,6 @@
 package dev.fg.buildyourownx.libs.dependency_injection.dependency_container
 
+import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import kotlin.reflect.KClass
 
 /**
@@ -8,5 +9,5 @@ import kotlin.reflect.KClass
  * */
 interface DependencyContainer : WritableDependencyContainer {
     fun mergeContainer(container: WritableDependencyContainer)
-    fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?) : T
+    fun <T: Any> getDependency(clazz: KClass<T>, qualifier: Any?, creationExtras: CreationExtras?) : T
 }

@@ -1,5 +1,6 @@
 package dev.fg.buildyourownx.libs.dependency_injection.injector
 
+import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import dev.fg.buildyourownx.libs.dependency_injection.Module
 import dev.fg.buildyourownx.libs.dependency_injection.dependency_container.DependencyContainer
 import kotlin.reflect.KClass
@@ -12,10 +13,10 @@ interface Injector {
     val dependencyContainer: DependencyContainer
     fun start(modules: List<Module>)
 
-    fun <T : Any> get(clazz: KClass<T>, qualifier: Any? = null): T
+    fun <T : Any> get(clazz: KClass<T>, qualifier: Any? = null, creationExtras: CreationExtras?): T
 
     fun verifyModules()
 }
-inline fun <reified T : Any> Injector.get(qualifier: Any? = null): T {
-    return this.get(T::class, qualifier)
+inline fun <reified T : Any> Injector.get(qualifier: Any? = null, creationExtras: CreationExtras?): T {
+    return this.get(T::class, qualifier, creationExtras)
 }

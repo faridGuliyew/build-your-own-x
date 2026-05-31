@@ -1,5 +1,6 @@
 package dev.fg.buildyourownx.libs.dependency_injection.injector
 
+import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import dev.fg.buildyourownx.libs.dependency_injection.Module
 
 object Inject {
@@ -9,7 +10,7 @@ object Inject {
         injector.start(modules)
     }
 
-    inline fun <reified T : Any> get(qualifier: Any? = null): T {
-        return injector.get<T>(qualifier)
+    inline fun <reified T : Any> get(qualifier: Any? = null, creationExtras: CreationExtras? = null): T {
+        return injector.get<T>(qualifier, creationExtras)
     }
 }
