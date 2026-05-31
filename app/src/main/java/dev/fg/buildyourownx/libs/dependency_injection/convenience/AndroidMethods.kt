@@ -17,7 +17,8 @@ inline fun <reified VM: ViewModel> ComponentActivity.injectViewModel(
         factoryProducer = {
             viewModelFactory {
                 initializer {
-                    Inject.get<VM>(
+                    Inject.get(
+                        clazz = VM::class,
                         qualifier = qualifier,
                         creationExtras = VMCreationExtras(
                             params = params,

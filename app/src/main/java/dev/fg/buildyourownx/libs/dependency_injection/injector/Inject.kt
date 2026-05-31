@@ -2,6 +2,7 @@ package dev.fg.buildyourownx.libs.dependency_injection.injector
 
 import dev.fg.buildyourownx.libs.dependency_injection.CreationExtras
 import dev.fg.buildyourownx.libs.dependency_injection.Module
+import kotlin.reflect.KClass
 
 object Inject {
     @PublishedApi
@@ -10,7 +11,8 @@ object Inject {
         injector.start(modules)
     }
 
-    inline fun <reified T : Any> get(qualifier: Any? = null, creationExtras: CreationExtras? = null): T {
-        return injector.get<T>(qualifier, creationExtras)
+    @PublishedApi
+    internal fun <T : Any> get(clazz: KClass<T>, qualifier: Any? = null, creationExtras: CreationExtras? = null): T {
+        return injector.get(clazz, qualifier, creationExtras)
     }
 }
