@@ -13,3 +13,5 @@ Solutions I will be sharing will be somewhat great, but definitely not optimized
 [Custom ImageLoader](app/src/main/java/dev/fg/buildyourownx/libs/image_loader/README.md)
 
 [Custom ServiceLocator](app/src/main/java/dev/fg/buildyourownx/libs/dependency_injection/README.md)
+
+[Custom Coroutines Library](app/src/main/java/dev/fg/buildyourownx/libs/my_coroutines/README.md)
