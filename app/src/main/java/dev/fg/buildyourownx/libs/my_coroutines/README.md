@@ -35,6 +35,7 @@ suspend fun withContext(context: CoroutineContext, block: suspend CoroutineScope
     val scope = CoroutineScope(currentCoroutineContext())
     scope.launch(context = context, block = block)?.join()
 }
+```
 
 ## 🧪 Concrete Demonstration & Testing Pipeline
 You can track execution traces, thread switching, and cancellation behavior inside MyCoroutinesActivity.kt
