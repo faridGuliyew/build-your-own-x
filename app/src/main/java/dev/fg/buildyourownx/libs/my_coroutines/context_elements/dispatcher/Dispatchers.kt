@@ -6,7 +6,7 @@ import java.util.concurrent.Executors
 
 object Dispatchers {
     val IO = object : Dispatcher() {
-        val ioPool = Executors.newFixedThreadPool(60)
+        val ioPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 8)
         override fun dispatch(task: () -> Unit) {
             ioPool.submit(task)
         }

@@ -11,7 +11,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-private val delayScheduler = Executors.newScheduledThreadPool(10)
+private val delayScheduler = Executors.newScheduledThreadPool(1)
 suspend fun delay(duration: Long) {
     val coroutineContext = currentCoroutineContext()
     val job = coroutineContext[Job.Key]!!
