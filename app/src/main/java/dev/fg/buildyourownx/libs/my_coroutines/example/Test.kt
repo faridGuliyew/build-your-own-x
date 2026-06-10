@@ -1,11 +1,13 @@
 package dev.fg.buildyourownx.libs.my_coroutines.example
 
-import dev.fg.buildyourownx.libs.my_coroutines.CoroutineScope
+import dev.fg.buildyourownx.libs.my_coroutines.context_elements.dispatcher.Dispatchers
 import dev.fg.buildyourownx.libs.my_coroutines.delay
+import dev.fg.buildyourownx.libs.my_coroutines.launch
+import dev.fg.buildyourownx.libs.my_coroutines.scope.utils.CoroutineScope
 import kotlin.coroutines.EmptyCoroutineContext
 
 fun myCoroutinesTest() {
-    val myScope = CoroutineScope(EmptyCoroutineContext)
+    val myScope = CoroutineScope(Dispatchers.Main)
     myScope.launch ("PARENT") {
         println("PARENT STARTED on ${Thread.currentThread().name}")
 
@@ -20,10 +22,11 @@ fun myCoroutinesTest() {
             println("CHILD 2 STARTED on ${Thread.currentThread().name}")
             delay(3000)
             println("CHILD 2 ENDED on ${Thread.currentThread().name}")
+            5/0
         }
         launch ("CHILD 3") {
             println("CHILD 3 STARTED on ${Thread.currentThread().name}")
-            delay(4000)
+            delay(60000)
             println("CHILD 3 ENDED on ${Thread.currentThread().name}")
         }
 

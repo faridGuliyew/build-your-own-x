@@ -5,6 +5,7 @@ import dev.fg.buildyourownx.libs.my_coroutines.context_elements.job.Job
 import dev.fg.buildyourownx.libs.my_coroutines.misc.currentCoroutineContext
 import dev.fg.buildyourownx.libs.my_coroutines.misc.extensions.ensureActive
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -17,7 +18,7 @@ suspend fun delay(duration: Long) {
     job.ensureActive()
 
     suspendCoroutine {
-        delayScheduler.schedule(
+        val future: ScheduledFuture<*> = delayScheduler.schedule(
             {
                 coroutineContext[Dispatcher.Key]!!.dispatch {
                     if (!job.isActive) {
@@ -30,5 +31,7 @@ suspend fun delay(duration: Long) {
             duration,
             TimeUnit.MILLISECONDS
         )
+
+        job.invokeOnDetach { future.cancel(false) }
     }
 }
