@@ -42,6 +42,13 @@ object NavUtils {
     // Return route name without params
     fun getSimpleRoute(route: String?): String? {
         if (route == null) return null
+        
+        // If it's a deep link (e.g. hiker://screen/campaign_2026), don't truncate at '/'
+        if (route.contains("://")) {
+            val queryIndex = route.indexOf('?')
+            return if (queryIndex != -1) route.substring(0, queryIndex) else route
+        }
+        
         val separatorList = listOf('/', '?')
         for (i in route.indices) {
             if (route[i] in separatorList) return route.substring(0, i)
