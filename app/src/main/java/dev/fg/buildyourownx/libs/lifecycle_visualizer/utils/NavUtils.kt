@@ -21,6 +21,24 @@ object NavUtils {
         return getArgsMap(entry).getPropertiesAsMultilineString()
     }
 
+    /**
+     * Returns the argument map with custom objects recursively reflected
+     * into nested Maps of their member properties, so the UI can render
+     * them as expandable/collapsible trees.
+     */
+    fun getReflectedArgsMap(entry: NavBackStackEntry): Map<String, Any?> {
+        val rawMap = getArgsMap(entry)
+        return buildMap {
+            for ((key, value) in rawMap) {
+                if (shouldPrintDirectly(value)) {
+                    put(key, value)
+                } else {
+                    put(key, ReflectUtils.getProperties(value))
+                }
+            }
+        }
+    }
+
     // Return route name without params
     fun getSimpleRoute(route: String?): String? {
         if (route == null) return null

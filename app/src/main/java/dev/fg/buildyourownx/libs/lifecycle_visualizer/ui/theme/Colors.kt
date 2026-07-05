@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui
+package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle

@@ -23,10 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.VisualizerState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.VisualizerState
+import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components.BubbleMode
+import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components.ExpandedPanelMode
+import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.state.HikerState
 import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.NavUtils
 import kotlin.math.roundToInt
 
@@ -41,21 +48,40 @@ fun HikerView(navController: NavController) {
     var selectedEntryId by remember { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
 
+    // Central state holder — survives recompositions
+    val hikerState = remember { HikerState() }
+
+    // Register destination changed listener for origin detection & logging
     LaunchedEffect(Unit) {
         navController.addOnDestinationChangedListener { controller, destination, bundle ->
-            // Capture the call stack at the moment this function is called
             val stackTrace = Throwable().stackTrace
-            val callerIndex = if (NavUtils.isTypeSafeRoute(destination.route)) 8 else 7
+            val isTypeSafe = NavUtils.isTypeSafeRoute(destination.route)
 
-            println("-----${destination.route}----")
-            stackTrace.getOrNull(callerIndex)?.let {
-                println("${it.fileName}:${it.lineNumber} (${it.methodName})")
-            }
-            println("-----")
+            val origin = hikerState.detectOrigin(
+                destination = destination,
+                bundle = bundle,
+                stackTrace = stackTrace,
+                isTypeSafe = isTypeSafe
+            )
+
+            // Get the entry ID for the destination that was just navigated to
+            val entryId = controller.currentBackStackEntry?.id ?: "unknown"
+
+            hikerState.recordNavigation(
+                entryId = entryId,
+                route = destination.route,
+                origin = origin,
+                backstackSize = controller.currentBackStack.value.size
+            )
         }
     }
 
+    // Observe lifecycle for each backstack entry to track RESUMED duration
     LaunchedEffect(currentBackstack.size) {
+        for (entry in currentBackstack) {
+            hikerState.observeEntryLifecycle(entry)
+        }
+
         if (currentBackstack.isNotEmpty() && visualizerState == VisualizerState.EXPANDED) {
             listState.animateScrollToItem(currentBackstack.lastIndex)
         }
@@ -75,7 +101,7 @@ fun HikerView(navController: NavController) {
                         offsetY += dragAmount.y
                     }
                 }
-                .align(Alignment.Center) // Start at center, drag from there
+                .align(Alignment.Center)
         ) {
             AnimatedVisibility(
                 visible = visualizerState == VisualizerState.BUBBLE,
@@ -102,10 +128,21 @@ fun HikerView(navController: NavController) {
                     backstack = currentBackstack,
                     listState = listState,
                     selectedEntryId = selectedEntryId,
+                    hikerState = hikerState,
                     onMinimize = { visualizerState = VisualizerState.BUBBLE },
                     onEntrySelected = { selectedEntryId = it.id }
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "start") {
+        composable("start") {}
+    }
+    HikerView(navController)
 }

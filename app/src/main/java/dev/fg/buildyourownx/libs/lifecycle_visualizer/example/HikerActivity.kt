@@ -1,5 +1,8 @@
 package dev.fg.buildyourownx.libs.lifecycle_visualizer.example
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.activity.ComponentActivity
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,6 +41,9 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
+import androidx.core.net.toUri
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Serializable
@@ -80,13 +87,13 @@ val FriendType = object : NavType<Friend>(isNullableAllowed = false) {
         return Json.encodeToString(value)
     }
 }
-
+var isFirst = true
 
 class LifecycleVisualizerActivity : ComponentActivity() {
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             CoroutineScope(Dispatchers.Main.immediate)
             val navController = rememberNavController()
@@ -97,13 +104,27 @@ class LifecycleVisualizerActivity : ComponentActivity() {
                         GenericScreen(i, onNavigate = {
                             navController.navigate("Screen$it")
                         }, onNavigateSafe = {
-                            navController.navigate(SafeScreenGraphStart())
+//                            navController.navigate("hiker://screen/1".toUri())
+//                            navController.navigate(SafeScreenGraphStart())
+                            navController.navigate(SafeScreen(
+                                friends = listOf("James", "Mark"),
+                                age = 20,
+                                colleagues = listOf("Best friend", "Mid guy"),
+                                name = "John",
+                                bestFriend = Friend("Jarob", Friend("Jessica", null))
+                            )
+                            )
                         })
                     }
                 }
                 navigation<SafeScreenGraph> (startDestination = SafeScreenGraphStart::class) {
-                    composable<SafeScreenGraphStart> {
+                    composable<SafeScreenGraphStart> (
+                        deepLinks = listOf(
+                            NavDeepLink("hiker://screen/{number}")
+                        )
+                    ) {
                         LaunchedEffect(Unit) {
+                            delay(5000)
                             navController.navigate(SafeScreen(
                                 friends = listOf("James", "Mark"),
                                 age = 20,
@@ -112,6 +133,11 @@ class LifecycleVisualizerActivity : ComponentActivity() {
                                 bestFriend = Friend("Jarob", Friend("Jessica", null))
                                 )
                             )
+                        }
+                        LaunchedEffect(Unit) {
+                            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow("TEST", "")!!.collectLatest {
+                                println("VALUE FOR TEST: $it")
+                            }
                         }
                     }
                 }
@@ -128,6 +154,13 @@ class LifecycleVisualizerActivity : ComponentActivity() {
                         isFirstTime = true
                         goToDialog()
                     }
+                    Button(
+                        onClick = {
+                            navController.previousBackStackEntry?.savedStateHandle?.set("TEST", "TEST${(0..100).random()}")
+                        }
+                    ) {
+                        Text("SET RANDOM!")
+                    }
                 }
                 dialog<DialogScreen> {
                     Text(it.toRoute<DialogScreen>().message)
@@ -135,6 +168,12 @@ class LifecycleVisualizerActivity : ComponentActivity() {
             }
 
             HikerView(navController)
+
+//            LaunchedEffect(Unit) {
+//                if (!isFirst) return@LaunchedEffect
+//                isFirst = false
+//                startActivity(Intent(Intent.ACTION_VIEW, "hiker://screen/1".toUri()))
+//            }
         }
     }
 }

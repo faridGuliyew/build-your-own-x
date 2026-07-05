@@ -9,14 +9,13 @@ object ReflectUtils {
         val result = mutableMapOf<String, Any?>()
 
         // Get all properties belonging to the object's class
-        val properties = instance::class.memberProperties as Collection<KProperty1<Any, *>>
+        val properties = instance::class.memberProperties as? Collection<KProperty1<Any, *>> ?: return null
 
         for (property in properties) {
-            // Safely extract the value of the property for the current instance
             val value = try {
                 property.get(instance)
             } catch (e: Exception) {
-                null // Handle potential private visibility access restrictions safely
+                continue
             }
 
             if (value == null) {
