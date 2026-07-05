@@ -7,235 +7,367 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.HikerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
-import androidx.core.net.toUri
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 
-
+// --- Models ---
 @Serializable
-class SafeScreen (val age: Int, val friends: List<String>, val colleagues: List<String>, val name: String, val bestFriend: Friend)
-
-//@Serializable
-//class SafeScreen (val friends: List<String>)
-
-@Serializable
-class DialogScreen (val message: String)
-
-@Serializable
-class SafeScreenGraph
-
-@Serializable
-class SafeScreenGraphStart
-
+@Parcelize
+data class Waypoint(val name: String, val elevation: Int) : Parcelable
 
 @Serializable
 @Parcelize
-class Friend (val name: String, val bestFriend: Friend?) : Parcelable
+data class Trail(
+    val id: String,
+    val name: String,
+    val difficulty: String,
+    val lengthKm: Float,
+    val waypoints: List<Waypoint>
+) : Parcelable
 
-val FriendType = object : NavType<Friend>(isNullableAllowed = false) {
-    override val name: String
-        get() = "friend_nav_type"
-    override fun put(bundle: Bundle, key: String, value: Friend) {
-        bundle.putParcelable(key, value)
-    }
-
-    override fun get(bundle: Bundle, key: String): Friend? {
-        return bundle.getParcelable(key) as? Friend::class.java
-    }
-
-    override fun parseValue(value: String): Friend {
-        // Decodes the string back into your object
-        return Json.decodeFromString(value)
-    }
-
-    override fun serializeAsValue(value: Friend): String {
-        // Encodes your object into a safe string representation for the route
-        return Json.encodeToString(value)
-    }
+val TrailNavType = object : NavType<Trail>(isNullableAllowed = false) {
+    override val name: String get() = "trail"
+    override fun put(bundle: Bundle, key: String, value: Trail) = bundle.putParcelable(key, value)
+    override fun get(bundle: Bundle, key: String): Trail? = bundle.getParcelable(key) as? Trail
+    override fun parseValue(value: String): Trail = Json.decodeFromString(Uri.decode(value))
+    override fun serializeAsValue(value: Trail): String = Uri.encode(Json.encodeToString(value))
 }
-var isFirst = true
+
+// --- Routes ---
+@Serializable
+object HomeRoute
+
+@Serializable
+data class ProfileRoute(val userId: String, val role: String)
+
+@Serializable
+data class TrailDetailsRoute(val trail: Trail)
+
+@Serializable
+data class AlertRoute(val title: String, val message: String)
+
+@Serializable
+data class DeepStackRoute(val level: Int)
+
+@Serializable
+data class DeepLinkRoute(val source: String)
+
+// --- Theme Colors ---
+private val BgColor = Color(0xFF121212)
+private val SurfaceColor = Color(0xFF1E1E1E)
+private val PrimaryGreen = Color(0xFF10B981) // Emerald Green
+private val TextWhite = Color(0xFFF9FAFB)
+private val TextGray = Color(0xFF9CA3AF)
+private val WarningRed = Color(0xFFEF4444)
 
 class LifecycleVisualizerActivity : ComponentActivity() {
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            CoroutineScope(Dispatchers.Main.immediate)
             val navController = rememberNavController()
-
-            NavHost(navController = navController, startDestination = "Screen0") {
-                for (i in screenColors.indices) {
-                    composable("Screen$i") {
-                        GenericScreen(i, onNavigate = {
-                            navController.navigate("Screen$it")
-                        }, onNavigateSafe = {
-//                            navController.navigate("hiker://screen/1".toUri())
-//                            navController.navigate(SafeScreenGraphStart())
-                            navController.navigate(SafeScreen(
-                                friends = listOf("James", "Mark"),
-                                age = 20,
-                                colleagues = listOf("Best friend", "Mid guy"),
-                                name = "John",
-                                bestFriend = Friend("Jarob", Friend("Jessica", null))
-                            )
-                            )
-                        })
-                    }
-                }
-                navigation<SafeScreenGraph> (startDestination = SafeScreenGraphStart::class) {
-                    composable<SafeScreenGraphStart> (
-                        deepLinks = listOf(
-                            NavDeepLink("hiker://screen/{number}")
-                        )
-                    ) {
-                        LaunchedEffect(Unit) {
-                            delay(5000)
-                            navController.navigate(SafeScreen(
-                                friends = listOf("James", "Mark"),
-                                age = 20,
-                                colleagues = listOf("Best friend", "Mid guy"),
-                                name = "John",
-                                bestFriend = Friend("Jarob", Friend("Jessica", null))
-                                )
-                            )
-                        }
-                        LaunchedEffect(Unit) {
-                            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow("TEST", "")!!.collectLatest {
-                                println("VALUE FOR TEST: $it")
-                            }
-                        }
-                    }
-                }
-                composable<SafeScreen> (
-                    typeMap = mapOf(typeOf<Friend>() to FriendType)
+            
+            Box(modifier = Modifier.fillMaxSize()) {
+                NavHost(
+                    navController = navController,
+                    startDestination = HomeRoute,
+                    modifier = Modifier.fillMaxSize().background(BgColor)
                 ) {
-                    var isFirstTime by rememberSaveable { mutableStateOf(true) }
-                    Text("Safe!")
-                    fun goToDialog() {
-                        navController.navigate(DialogScreen("Hello, world!"))
+                    // 1. Home Screen (Start Destination)
+                    composable<HomeRoute> {
+                        HomeScreen(
+                            onProfileClick = {
+                                navController.navigate(ProfileRoute(userId = "user_49281", role = "Premium Explorer"))
+                            },
+                            onTrailClick = {
+                                val sampleTrail = Trail(
+                                    id = "trail_yosemite_half_dome",
+                                    name = "Half Dome Cables Route",
+                                    difficulty = "Extreme",
+                                    lengthKm = 27.4f,
+                                    waypoints = listOf(
+                                        Waypoint("Happy Isles", 1220),
+                                        Waypoint("Vernal Fall", 1538),
+                                        Waypoint("Nevada Fall", 1821),
+                                        Waypoint("Sub Dome", 2400),
+                                        Waypoint("Summit", 2694)
+                                    )
+                                )
+                                navController.navigate(TrailDetailsRoute(trail = sampleTrail))
+                            },
+                            onDialogClick = {
+                                navController.navigate(AlertRoute(title = "Danger", message = "Severe weather reported on the trail."))
+                            },
+                            onDeepLinkClick = {
+                                // Simulate an external deep link intent that the NavController catches
+                                val intent = Intent(Intent.ACTION_VIEW, "hiker://screen/campaign_2026".toUri())
+                                startActivity(intent)
+                            },
+                            onSpamClick = {
+                                // Spams navigation to trigger Burst / Double Click warning in Hiker logs
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    navController.navigate(ProfileRoute(userId = "spam_test", role = "Tester"))
+                                }
+                            },
+                            onDeepStackClick = {
+                                navController.navigate(DeepStackRoute(level = 1))
+                            }
+                        )
                     }
-                    LaunchedEffect(Unit) {
-                        if (!isFirstTime) return@LaunchedEffect
-                        isFirstTime = true
-                        goToDialog()
+
+                    // 2. Profile Screen (Simple primitive args)
+                    composable<ProfileRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<ProfileRoute>()
+                        GenericScreen(
+                            title = "Explorer Profile",
+                            subtitle = "ID: ${route.userId} | Role: ${route.role}",
+                            onBack = { navController.popBackStack() }
+                        )
                     }
-                    Button(
-                        onClick = {
-                            navController.previousBackStackEntry?.savedStateHandle?.set("TEST", "TEST${(0..100).random()}")
+
+                    // 3. Trail Details Screen (Type-Safe Complex Object)
+                    composable<TrailDetailsRoute>(
+                        typeMap = mapOf(typeOf<Trail>() to TrailNavType)
+                    ) { backStackEntry ->
+                        val trail = backStackEntry.toRoute<TrailDetailsRoute>().trail
+                        GenericScreen(
+                            title = trail.name,
+                            subtitle = "${trail.lengthKm} km • ${trail.difficulty}\n${trail.waypoints.size} waypoints recorded.",
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+
+                    // 4. Alert Dialog Screen
+                    dialog<AlertRoute> { backStackEntry ->
+                        val alert = backStackEntry.toRoute<AlertRoute>()
+                        AlertDialogContent(
+                            title = alert.title,
+                            message = alert.message,
+                            onDismiss = { navController.popBackStack() }
+                        )
+                    }
+
+                    // 5. Deep Stack Route (To test deep stack > 10 warning)
+                    composable<DeepStackRoute> { backStackEntry ->
+                        val level = backStackEntry.toRoute<DeepStackRoute>().level
+                        GenericScreen(
+                            title = "Deep Stack: Level $level",
+                            subtitle = "Keep digging to trigger the >10 stack warning.",
+                            onBack = { navController.popBackStack() }
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            ActionButton(
+                                text = "Go Deeper (Level ${level + 1})",
+                                color = PrimaryGreen,
+                                onClick = { navController.navigate(DeepStackRoute(level = level + 1)) }
+                            )
                         }
-                    ) {
-                        Text("SET RANDOM!")
+                    }
+
+                    // 6. Deep Link Receiver
+                    composable(
+                        route = "hiker://screen/{source}",
+                        deepLinks = listOf(navDeepLink { uriPattern = "hiker://screen/{source}" })
+                    ) { backStackEntry ->
+                        val source = backStackEntry.arguments?.getString("source") ?: "Unknown"
+                        GenericScreen(
+                            title = "Deep Link Success",
+                            subtitle = "Arrived via external link.\nSource: $source",
+                            onBack = { navController.popBackStack() }
+                        )
                     }
                 }
-                dialog<DialogScreen> {
-                    Text(it.toRoute<DialogScreen>().message)
-                }
+
+                // Attach Hiker Floating Window
+                HikerView(navController)
             }
-
-            HikerView(navController)
-
-//            LaunchedEffect(Unit) {
-//                if (!isFirst) return@LaunchedEffect
-//                isFirst = false
-//                startActivity(Intent(Intent.ACTION_VIEW, "hiker://screen/1".toUri()))
-//            }
         }
     }
 }
 
-val screenColors =
-    listOf(
-        Color.Red,
-        Color.Green,
-        Color.Blue,
-        Color.Black,
-        Color.Yellow,
-        Color.Magenta,
-        Color.Red,
-        Color.Green,
-        Color.Blue,
-        Color.Black,
-        Color.Yellow,
-        Color.Magenta,
-    )
+// --- UI Components ---
 
 @Composable
-fun GenericScreen(index: Int, onNavigate: (Int) -> Unit, onNavigateSafe: () -> Unit) {
+fun HomeScreen(
+    onProfileClick: () -> Unit,
+    onTrailClick: () -> Unit,
+    onDialogClick: () -> Unit,
+    onDeepLinkClick: () -> Unit,
+    onSpamClick: () -> Unit,
+    onDeepStackClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = screenColors[index]),
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            text = "Hiker",
+            color = PrimaryGreen,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Black,
+            letterSpacing = 2.sp
+        )
+        Text(
+            text = "Demo Application",
+            color = TextGray,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        // Feature Action Cards
+        ActionButton("String Route (Profile)", PrimaryGreen, onProfileClick)
+        ActionButton("Type-Safe Object Route (Trail)", PrimaryGreen, onTrailClick)
+        ActionButton("Dialog Navigation", PrimaryGreen, onDialogClick)
+        ActionButton("Deep Link Simulation", PrimaryGreen, onDeepLinkClick)
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(color = SurfaceColor, thickness = 2.dp)
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Trigger Warnings",
+            color = WarningRed.copy(alpha = 0.8f),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        
+        ActionButton("Spam Clicks (Burst Warning)", WarningRed, onSpamClick)
+        ActionButton("Deep Stack (Depth Warning)", WarningRed, onDeepStackClick)
+        
+        Spacer(modifier = Modifier.height(80.dp)) // Padding for floating view
+    }
+}
+
+@Composable
+fun GenericScreen(
+    title: String,
+    subtitle: String,
+    onBack: () -> Unit,
+    extraContent: @Composable () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BgColor)
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        var count by rememberSaveable { mutableIntStateOf(0) }
-        var isGoingUp = remember { false }
-        Text("Screen $index!", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        Button(
-            onClick = {
-                if (count == screenColors.lastIndex) {
-                    isGoingUp = false
-                } else if (count == 0) {
-                    isGoingUp = true
-                }
+        Text(
+            text = title,
+            color = TextWhite,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = subtitle,
+            color = TextGray,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 24.sp
+        )
+        
+        extraContent()
 
-                if (isGoingUp) {
-                    count++
-                } else {
-                    count--
-                }
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            text = "GO BACK",
+            color = PrimaryGreen,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .clickable { onBack() }
+                .padding(16.dp)
+        )
+    }
+}
+
+@Composable
+fun ActionButton(text: String, color: Color, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(SurfaceColor)
+            .clickable { onClick() }
+            .padding(18.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text.uppercase(),
+            color = color,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            letterSpacing = 1.sp
+        )
+    }
+}
+
+@Composable
+fun AlertDialogContent(title: String, message: String, onDismiss: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(SurfaceColor)
+            .padding(24.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(title, color = WarningRed, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(message, color = TextWhite, fontSize = 14.sp, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(24.dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(PrimaryGreen.copy(alpha = 0.2f))
+                    .clickable { onDismiss() }
+                    .padding(horizontal = 24.dp, vertical = 10.dp)
+            ) {
+                Text("DISMISS", color = PrimaryGreen, fontWeight = FontWeight.Bold)
             }
-        ) {
-            Text("Go to Screen$count!", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        }
-        Button(
-            onClick = {
-                onNavigate(count)
-            }
-        ) {
-            Text("Go!", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
-        }
-        Button(
-            onClick = {
-                onNavigateSafe()
-            }
-        ) {
-            Text("Go to safe screen!", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
         }
     }
 }
