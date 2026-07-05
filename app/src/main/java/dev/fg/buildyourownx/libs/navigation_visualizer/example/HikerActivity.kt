@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.example
+package dev.fg.buildyourownx.libs.navigation_visualizer.example
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,13 +32,12 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.HikerView
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.HikerView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 

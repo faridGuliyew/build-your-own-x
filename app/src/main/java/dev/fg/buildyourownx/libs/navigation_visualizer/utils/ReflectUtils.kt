@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.utils
+package dev.fg.buildyourownx.libs.navigation_visualizer.utils
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties

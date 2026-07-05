@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.state
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui.state
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +8,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.HikerLogEntry
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.NavigationOrigin
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.NavUtils
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.HikerLogEntry
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.NavigationOrigin
+import dev.fg.buildyourownx.libs.navigation_visualizer.utils.NavUtils
 
 class HikerState {
     val logEntries = mutableStateListOf<HikerLogEntry>()

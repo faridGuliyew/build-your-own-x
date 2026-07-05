@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.DarkSurfaceColor
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.EmeraldGreen
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.DarkSurfaceColor
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.EmeraldGreen
 
 @Composable
 fun BubbleMode(backstackCount: Int, currentRoute: String, onExpand: () -> Unit) {

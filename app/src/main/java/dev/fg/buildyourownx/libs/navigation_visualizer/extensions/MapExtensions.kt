@@ -1,7 +1,7 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.extensions
+package dev.fg.buildyourownx.libs.navigation_visualizer.extensions
 
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.ReflectUtils
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.shouldPrintDirectly
+import dev.fg.buildyourownx.libs.navigation_visualizer.utils.ReflectUtils
+import dev.fg.buildyourownx.libs.navigation_visualizer.utils.shouldPrintDirectly
 
 fun <A, B> Map<A, B>.getAsMultilineString(): String {
     return buildString {

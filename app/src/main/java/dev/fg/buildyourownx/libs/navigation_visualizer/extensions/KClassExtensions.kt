@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.extensions
+package dev.fg.buildyourownx.libs.navigation_visualizer.extensions
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor

@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.model
+package dev.fg.buildyourownx.libs.navigation_visualizer.model
 
 data class HikerLogEntry(
     val entryId: String,

@@ -1,8 +1,8 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.utils
+package dev.fg.buildyourownx.libs.navigation_visualizer.utils
 
 import androidx.core.os.bundleOf
 import androidx.navigation.NavBackStackEntry
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.extensions.getPropertiesAsMultilineString
+import dev.fg.buildyourownx.libs.navigation_visualizer.extensions.getPropertiesAsMultilineString
 import kotlin.reflect.KClass
 
 object NavUtils {

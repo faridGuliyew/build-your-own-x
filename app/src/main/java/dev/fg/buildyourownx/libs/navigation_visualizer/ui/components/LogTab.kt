@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,12 +32,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.HikerLogEntry
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.NavigationOrigin
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.state.HikerState
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.AmberYellow
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.EmeraldGreen
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.MutedGray
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.HikerLogEntry
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.NavigationOrigin
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.state.HikerState
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.AmberYellow
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.EmeraldGreen
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.MutedGray
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date

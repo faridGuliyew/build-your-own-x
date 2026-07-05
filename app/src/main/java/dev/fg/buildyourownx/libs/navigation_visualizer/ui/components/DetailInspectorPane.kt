@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -31,14 +31,14 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.extensions.getPrimaryConstructorParamNames
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.NavigationOrigin
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.state.HikerState
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.AmberYellow
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.EmeraldGreen
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.LightGrayText
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.MutedGray
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.NavUtils
+import dev.fg.buildyourownx.libs.navigation_visualizer.extensions.getPrimaryConstructorParamNames
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.NavigationOrigin
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.state.HikerState
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.AmberYellow
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.EmeraldGreen
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.LightGrayText
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.MutedGray
+import dev.fg.buildyourownx.libs.navigation_visualizer.utils.NavUtils
 import kotlin.collections.iterator
 
 @SuppressLint("RestrictedApi")

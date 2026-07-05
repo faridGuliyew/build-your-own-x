@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -20,9 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.EmeraldGreen
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.LightGrayText
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.theme.MutedGray
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.EmeraldGreen
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.LightGrayText
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.theme.MutedGray
 import kotlin.collections.iterator
 
 /**

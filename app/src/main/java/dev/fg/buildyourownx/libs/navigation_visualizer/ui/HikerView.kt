@@ -1,4 +1,4 @@
-package dev.fg.buildyourownx.libs.lifecycle_visualizer.ui
+package dev.fg.buildyourownx.libs.navigation_visualizer.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -30,11 +30,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.model.VisualizerState
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components.BubbleMode
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.components.ExpandedPanelMode
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.ui.state.HikerState
-import dev.fg.buildyourownx.libs.lifecycle_visualizer.utils.NavUtils
+import dev.fg.buildyourownx.libs.navigation_visualizer.model.VisualizerState
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.components.BubbleMode
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.components.ExpandedPanelMode
+import dev.fg.buildyourownx.libs.navigation_visualizer.ui.state.HikerState
+import dev.fg.buildyourownx.libs.navigation_visualizer.utils.NavUtils
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
